@@ -88,10 +88,11 @@ struct ZipFile::TZipDirFileHeader
 };
 #pragma pack()
 
-
-// Function:      Init
-// Purpose:       Initialize the object and read the zip file directory.
-// Parameters:    A stdio FILE* used for reading.
+///
+/// @Function:      Init
+/// Initialize the object and read the zip file directory.
+/// @Param resourceFileName A stdio FILE* used for reading.
+/// @Return true if successful.
 bool ZipFile::Init(const std::string &resourceFileName)
 {
   End();
@@ -171,11 +172,10 @@ bool ZipFile::Init(const std::string &resourceFileName)
 }
 
 
-// --------------------------------------------------------------------------
-// Function:      End
-// Purpose:       Finish the object
-// Parameters:
-// --------------------------------------------------------------------------
+///
+/// @Function:      End
+/// Finish the object
+///
 void ZipFile::End()
 {
     mZipContentsMap.clear();
@@ -183,11 +183,11 @@ void ZipFile::End()
     mNumEntries = 0;
 }
 
-// --------------------------------------------------------------------------
-// Function:      GetFilename
-// Purpose:       Return the name of a file
-// Parameters:    The file index and the buffer where to store the filename
-// --------------------------------------------------------------------------
+///
+/// @Function:      GetFilename
+/// @Return the name of a file
+/// @Param i The file index and the buffer where to store the filename.
+///
 std::string ZipFile::GetFilename(int i)  const
 {
     std::string fileName = "";
@@ -202,11 +202,11 @@ std::string ZipFile::GetFilename(int i)  const
 }
 
 
-// --------------------------------------------------------------------------
-// Function:      GetFileLen
-// Purpose:       Return the length of a file so a buffer can be allocated
-// Parameters:    The file index.
-// --------------------------------------------------------------------------
+///
+/// @Function:      GetFileLen
+/// @Return the length of a file so a buffer can be allocated.
+/// @Param i The file index.
+///
 int ZipFile::GetFileLength(int i) const
 {
   if (i < 0 || i >= mNumEntries)
@@ -215,14 +215,16 @@ int ZipFile::GetFileLength(int i) const
     return m_papDir[i]->ucSize;
 }
 
-// --------------------------------------------------------------------------
-// Function:      ReadFile
-// Purpose:       Uncompress a complete file
-// Parameters:    The file index and the pre-allocated buffer
-// --------------------------------------------------------------------------
-bool ZipFile::ReadFile(int i, void *pBuf)
+///
+/// @Function:      ReadFile
+/// Uncompress a complete file.
+/// @Param i The file index.
+/// @Param pBuffer The pre-allocated buffer.
+/// @Return True if successful.
+///
+bool ZipFile::ReadFile(int i, void *pBuffer)
 {
-  if (pBuf == NULL || i < 0 || i >= mNumEntries)
+  if (pBuffer == NULL || i < 0 || i >= mNumEntries)
     return false;
 
   // Quick'n dirty read, the whole file at once.
@@ -243,7 +245,7 @@ bool ZipFile::ReadFile(int i, void *pBuf)
   if (h.compression == Z_NO_COMPRESSION)
   {
     // Simply read in raw stored data.
-    fread(pBuf, h.cSize, 1, m_pFile);
+    fread(pBuffer, h.cSize, 1, m_pFile);
     return true;
   }
   else if (h.compression != Z_DEFLATED)
@@ -265,7 +267,7 @@ bool ZipFile::ReadFile(int i, void *pBuf)
 
   stream.next_in = (Bytef*)pcData;
   stream.avail_in = (uInt)h.cSize;
-  stream.next_out = (Bytef*)pBuf;
+  stream.next_out = (Bytef*)pBuffer;
   stream.avail_out = h.ucSize;
   stream.zalloc = (alloc_func)0;
   stream.zfree = (free_func)0;
@@ -285,6 +287,23 @@ bool ZipFile::ReadFile(int i, void *pBuf)
 
   delete[] pcData;
   return ret;
+}
+
+///
+/// @Function:      Find
+/// Find the index of the file at given path.
+/// @Param path The path of the file to find.
+/// @Return index of file in zip, -1 if not found.
+/// 
+int ZipFile::Find(const std::string &path) const
+{
+    std::string lowerCase = path;
+    std::transform(lowerCase.begin(), lowerCase.end(), lowerCase.begin(), (int(*)(int)) std::tolower);
+    ZipContentsMap::const_iterator i = mZipContentsMap.find(lowerCase);
+    if (i == mZipContentsMap.end())
+        return -1;
+
+    return i->second;
 }
 
 }

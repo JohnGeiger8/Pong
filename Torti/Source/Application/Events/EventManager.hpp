@@ -32,27 +32,27 @@ public:
     
     ///
     /// Registers delegate function that will be called when event type is triggered.
-    /// Returns true if successful.
+    /// @Return true if successful.
     ///
     virtual bool VAddListener(const EventListenerDelegate& eventDelegate, const EventType& type) = 0;
     
     ///
     /// Removes a delegate/event type pairing from the internal tables.
-    /// Returns false if pairing wasn't found.
+    /// @Return false if pairing wasn't found.
     ///
     virtual bool VRemoveListener(const EventListenerDelegate& eventDelegate, const EventType& type) = 0;
     
     ///
     /// Fires off event NOW. Bypasses the event queue and immediately calls all
     ///   delegate functions registered for the event.
-    /// Returns true if delegate functions exist? FIXME: when does it return true?
+    /// @Return true if delegate functions exist? FIXME: when does it return true?
     ///
     virtual bool VTriggerEvent(const IEventDataPtr& pEvent) const = 0;
     
     ///
     /// Fires off event. Adds event to event queue and calls the delegate function on
     ///   the next call to VTickVUpdate(), assuming there's enough time.
-    /// Returns true if delegate functions exist? FIXME: when does it return true?
+    /// @Return true if delegate functions exist? FIXME: when does it return true?
     ///
     virtual bool VQueueEvent(const IEventDataPtr& pEvent) const = 0;
     
@@ -61,7 +61,7 @@ public:
     ///   processing queue. This may be done up to the point that it's actively being
     ///   processed, i.e. when it's safe to happen during event processing itself.
     /// If allOfType is true, then all events of type are cleared from queue.
-    /// Returns true if event was found and removed, false otherwise.
+    /// @Return true if event was found and removed, false otherwise.
     ///
     virtual bool VAbortEvent(const EventType& type, bool allOfType = false) = 0;
     
@@ -70,7 +70,7 @@ public:
     ///   time limit so that the event processing does not take too long. Note the
     ///   danger of using this artificial limiter is that all messages may not be
     ///   processed.
-    /// Returns true if all messages were processed, false otherwise (timeout).
+    /// @Return true if all messages were processed, false otherwise (timeout).
     ///
     virtual bool VTickVUpdate(unsigned long maxMillis = kINIFINITE) = 0;
     

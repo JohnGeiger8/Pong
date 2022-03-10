@@ -42,6 +42,7 @@ public:
     std::string GetFilename(int i) const;
     int GetFileLength(int i) const;
     bool ReadFile(int i, void *pBuffer);
+    int Find(const std::string &path) const;
     
     ZipContentsMap mZipContentsMap;
     
