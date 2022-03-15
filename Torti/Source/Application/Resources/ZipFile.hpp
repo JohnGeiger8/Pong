@@ -1,3 +1,4 @@
+// FIXME: This class just doesn't currently work on my Mac
 //
 //  ZipFile.hpp
 //  Pong
