@@ -6,3 +6,110 @@
 //
 
 #include "TortiApp.hpp"
+
+
+namespace Torti {
+
+/// Application global variable
+TortiGameApp* g_pApp = NULL;
+
+TortiGameApp::TortiGameApp()
+    : m_pGame(NULL),
+        mDesktopSize(0, 0, 0, 0),
+        mScreenSize(0, 0),
+        mIsRunning(false),
+        m_pEventManager(NULL),
+        mIsQuitRequested(false),
+        mIsQuitting(false)
+{
+    g_pApp = this;
+}
+
+///
+/// Initialize all major systems of application
+///
+bool TortiGameApp::InitInstance(int screenWidth, int screenHeight)
+{
+    RegisterEngineEvents();
+    VRegisterGameEvents();
+    
+    // FIXME: Initialize resource cache/array/whatever here as needed
+    
+    // FIXME: Initialize resource loaders here as needed
+    
+    m_pEventManager = std::shared_ptr<EventManager>(new EventManager("", true));
+    if (!m_pEventManager)
+    {
+        printf("Error initializing event manager.");
+        return false;
+    }
+    
+    // FIXME: initialize the window here
+    
+    mScreenSize = Point(screenWidth, screenHeight);
+    
+    // FIXME: Check renderer type and initialize here
+    
+    m_pGame = VCreateGameAndView();
+    if (!m_pGame)
+    {
+        printf("Error initializing Game Logic and View.");
+        return false;
+    }
+    
+    // FIXME: Load resources we'll need to start game
+    
+    mIsRunning = true;
+    
+    return true;
+}
+
+bool TortiGameApp::VLoadGame()
+{
+    // FIXME: Argument?
+//    return m_pGame->VLoadGame("");
+    return true;
+}
+
+///
+/// Called once at beginning of every frame. Updates the scene, but doesn't actually render.
+///  @Param time current time
+///  @Param elapsedTime time elapsed since last frame????????
+///
+void TortiGameApp::OnUpdateGame(double time, float elapsedTime)
+{
+    if (g_pApp->mIsQuitting)
+    {
+        printf("Quitting"); // FIXME: Notify user or otherwise handle quitting
+    }
+    
+    if (g_pApp->m_pGame)
+    {
+        // Give event queue 20 ms to process events
+        IEventManager::GetGlobalEventManager()->VTickVUpdate(20);
+        
+        // FIXME: implement
+//        g_pApp->m_pGame->VOnUpdate(time, elapsedTime);
+    }
+}
+
+///
+/// Performs  all of scene's rendering. Called at end of each frame, or when window needs redrawing.
+void TortiGameApp::OnFrameRender(double time, float elapsedTime)
+{
+    TortiGameLogic *pGame = g_pApp->m_pGame.get();
+    
+    // FIXME: implement
+//    for (const TortiHumanView& view : pGame->mGameViews)
+//    {
+//        view->VOnRender(time, elapsedTime);
+//    }
+}
+
+// FIXME: Implement
+void TortiGameApp::RegisterEngineEvents()
+{
+    
+}
+
+}

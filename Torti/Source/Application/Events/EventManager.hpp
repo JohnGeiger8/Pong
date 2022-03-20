@@ -54,7 +54,7 @@ public:
     ///   the next call to VTickVUpdate(), assuming there's enough time.
     /// @Return true if delegate functions exist? FIXME: when does it return true?
     ///
-    virtual bool VQueueEvent(const IEventDataPtr& pEvent) const = 0;
+    virtual bool VQueueEvent(const IEventDataPtr& pEvent) = 0;
     
     ///
     /// Finds next available instance of named event type and remove it from the
@@ -83,6 +83,7 @@ public:
 };
 
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
+
 ///
 /// Implements IEventManager interface. Handles all events and event listeners.
 ///
