@@ -33,7 +33,7 @@ bool SDLWindow::VCreateWindow(std::string title, int xPosition, int yPosition, i
 {
     if (!SDL_WasInit(SDL_INIT_VIDEO))
     {
-        printf("Error: SDL Window can't be initialized without SDL Video initialized.");
+        printf("Error: SDL Window can't be initialized without SDL Video initialized\n");
         return false;
     }
     
@@ -56,14 +56,6 @@ void SDLWindow::VShutdown()
 {
     SDL_DestroyWindow(m_pWindow);
     m_pWindow = NULL;
-}
-
-///
-/// @Return type of window
-/// 
-WindowType SDLWindow::VGetWindowType()
-{
-    return mWindowType;
 }
 
 }

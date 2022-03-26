@@ -31,7 +31,7 @@ public:
     // IWindow implementation
     virtual bool VCreateWindow(std::string title, int xPosition, int yPosition, int width, int height);
     virtual void VShutdown();
-    virtual WindowType VGetWindowType();
+    virtual WindowType VGetWindowType() { return mWindowType; };
 };
 
 }

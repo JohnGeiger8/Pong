@@ -11,6 +11,7 @@
 
 #include <memory>
 #include "Math.hpp"
+#include "Color.hpp"
 #include "IWindow.hpp"
 
 namespace Torti {
@@ -20,16 +21,14 @@ enum class RendererType
     SDL2_Renderer
 };
 
-class Color;
-
 ///
 /// Defines a general renderer
 ///
 class IRenderer
 {
 public:
-    virtual bool InitRenderer(std::shared_ptr<IWindow> window)=0;
-    virtual void VSetBackgroundColor(unsigned int red, unsigned int green, unsigned int blue, unsigned int alpha)=0;
+    virtual bool VInitRenderer(std::shared_ptr<IWindow> window)=0;
+    virtual void VSetBackgroundColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)=0;
     virtual void VShutdown()=0;
     virtual bool VPreRender()=0;
     virtual bool VPostRender()=0;

@@ -26,4 +26,9 @@ std::shared_ptr<Torti::TortiGameLogic> PongApp::VCreateGameAndView()
     return std::shared_ptr<Torti::TortiGameLogic>();
 }
 
+void PongApp::VRegisterGameEvents()
+{
+    // FIXME: implement/document
+}
+
 }
