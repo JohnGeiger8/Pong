@@ -11,6 +11,8 @@ namespace Torti {
 
 static IEventManager* g_pEventManager;
 
+//GenericObjectFactory<IEventData, EventType> g_eventFactory;
+
 IEventManager* IEventManager::GetGlobalEventManager()
 {
     assert(g_pEventManager);

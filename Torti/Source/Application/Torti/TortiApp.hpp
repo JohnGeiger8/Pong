@@ -18,9 +18,7 @@
 
 namespace Torti {
 
-
 using String = std::string;
-
 
 // FIXME: move/replace these
 struct GameOptions

@@ -14,10 +14,16 @@
 #include <memory>
 #include "FastDelegate.h"
 #include "EventData.hpp"
+//#include "GenericObjectFactory.hpp"
 
 namespace Torti {
 
 using EventListenerDelegate = fastdelegate::FastDelegate1<IEventDataPtr>;
+
+// For registering and creating events
+// FIXME: I don't think I need this
+//extern GenericObjectFactory<IEventData, EventType> gEventFactory;
+
 
 ///
 /// Top level interface for the Event Manager. Manages adding, removing, and processing of all events.
@@ -80,6 +86,24 @@ public:
     ///   managers. It's invalid to have more than one global event manager.
     ///
     static IEventManager* GetGlobalEventManager();
+    
+    //FIXME: I literally have no idea what the point is of event registration.
+    
+    ///
+    /// Register event with global event factory
+    ///
+//    template <class EventClass>
+//    static void RegisterEvent(EventClass type) { gEventFactory.Register<EventClass>(EventClass::sk_EventType); };
+    
+    ///
+    /// Create event with global event factory
+    ///
+//    template <class EventType>
+//    static void CreateEvent(EventType t)
+//    {
+//        gEventFactory.Create(t);
+//    }
+    
 };
 
 const unsigned int EVENTMANAGER_NUM_QUEUES = 2;

@@ -94,7 +94,8 @@ void TortiGameApp::OnUpdateGame(double time, float elapsedTime)
 }
 
 ///
-/// Performs  all of scene's rendering. Called at end of each frame, or when window needs redrawing.
+/// Performs  all of scene's rendering. Called at end of each frame, or when window needs redrawing
+///
 void TortiGameApp::OnFrameRender(double time, float elapsedTime)
 {
     TortiGameLogic *pGame = g_pApp->m_pGame.get();
@@ -106,7 +107,7 @@ void TortiGameApp::OnFrameRender(double time, float elapsedTime)
 //    }
 }
 
-// FIXME: Implement
+// Don't think I need this
 void TortiGameApp::RegisterEngineEvents()
 {
     
