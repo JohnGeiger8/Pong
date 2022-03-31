@@ -9,10 +9,18 @@
 #ifndef TortiGameLogic_hpp
 #define TortiGameLogic_hpp
 
+#include <map>
+#include "tinyxml2.h"
 #include "IGameView.hpp"
 #include "IGameLogic.hpp"
+#include "EventData.hpp"
+#include "Actor.hpp"
+#include "Math.hpp"
 
 namespace Torti {
+
+using ActorMap = std::map<ActorId, StrongActorPtr>;
+using Level = std::string;
 
 class TortiGameLogic : public IGameLogic
 {
@@ -20,8 +28,8 @@ protected:
     float mLifetime;                           //indicates how long this game has been in session
 //    ProcessManager* m_pProcessManager;             // a game logic entity
 //    GCCRandom m_random;                                // our RNG
-//    ActorMap m_actors;
-//    ActorId m_LastActorId;
+    ActorMap mActors;
+    ActorId mLastActorId;
     BaseGameState mState;                            // game state: loading, running, etc.
     int mExpectedPlayers;                            // how many local human players
 //    int m_ExpectedRemotePlayers;                    // expected remote human players
@@ -52,28 +60,26 @@ public:
 //        m_bProxy = isProxy;
 //    }
 //    const bool IsProxy() const { return m_bProxy; }
-
-    // [mrmike] CanRunLua() is a bit of a hack - but I can't have Lua scripts running on the clients. They should belong to the logic.
-    // FUTURE WORK - Perhaps the scripts can have a marker or even a special place in the resource file for any scripts that can run on remote clients
+    
 //    const bool CanRunLua() const { return !IsProxy() || GetState()!=BGS_Running; }
 
-//    ActorId GetNewActorID( void )
-//    {
-//        return ++m_LastActorId;
-//    }
+    ActorId GetNewActorID(void)
+    {
+        return ++mLastActorId;
+    }
     
 //    std::shared_ptr<PathingGraph> GetPathingGraph(void) { return m_pPathingGraph; }
 //    GCCRandom& GetRNG(void) { return m_random; }
 
-//    virtual void VAddView(std::shared_ptr<IGameView> pView, ActorId actorId=INVALID_ACTOR_ID);
+    virtual void VAddView(std::shared_ptr<IGameView> pView, ActorId actorId=INVALID_ACTOR_ID);
     virtual void VRemoveView(std::shared_ptr<IGameView> pView);
 
-//    virtual StrongActorPtr VCreateActor(const std::string &actorResource, TiXmlElement *overrides, const Mat4x4* initialTransform=NULL, const ActorId serversActorId=INVALID_ACTOR_ID);  // [rez] note: don't store this strong pointer outside of this class
-//    virtual void VDestroyActor(const ActorId actorId);
-//    virtual WeakActorPtr VGetActor(const ActorId actorId);
-//    virtual void VModifyActor(const ActorId actorId, TiXmlElement *overrides);
+    virtual StrongActorPtr VCreateActor(const std::string &actorResource, tinyxml2::XMLElement *overrides, const Point initialTransform, const ActorId serversActorId=INVALID_ACTOR_ID);  // [rez] note: don't store this strong pointer outside of this class
+    virtual void VDestroyActor(const ActorId actorId);
+    virtual WeakActorPtr VGetActor(const ActorId actorId);
+    virtual void VModifyActor(const ActorId actorId, tinyxml2::XMLElement *overrides);
 
-//    virtual void VMoveActor(const ActorId id, Mat4x4 const &mat) {}
+    virtual void VMoveActor(const ActorId id, Point const &point) {}
 
     // editor functions
 //    std::string GetActorXml(const ActorId id);
@@ -98,16 +104,16 @@ public:
 //    void AttachProcess(StrongProcessPtr pProcess) { if (m_pProcessManager) {m_pProcessManager->AttachProcess(pProcess);} }
 
     // event delegates
-//    void RequestDestroyActorDelegate(IEventDataPtr pEventData);
+    void RequestDestroyActorDelegate(IEventDataPtr pEventData);
 
 protected:
 //    virtual ActorFactory* VCreateActorFactory(void);
 
     // [rez] Override this function to do any game-specific loading.
-//    virtual bool VLoadGameDelegate(TiXmlElement* pLevelData) { return true; }
+    virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) { return true; }
 
-//    void MoveActorDelegate(IEventDataPtr pEventData);
-//    void RequestNewActorDelegate(IEventDataPtr pEventData);
+    void MoveActorDelegate(IEventDataPtr pEventData);
+    void RequestNewActorDelegate(IEventDataPtr pEventData);
 };
 
 }
