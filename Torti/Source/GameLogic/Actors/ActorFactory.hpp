@@ -13,7 +13,7 @@
 #include "Math.hpp"
 #include "GenericObjectFactory.hpp"
 #include "XmlResourceLoader.hpp"
-#include "Actor.hpp"
+#include "ActorInterfaces.hpp"
 
 namespace Torti {
 

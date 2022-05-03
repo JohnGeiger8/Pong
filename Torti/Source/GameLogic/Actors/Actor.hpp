@@ -10,22 +10,63 @@
 #define Actor_hpp
 
 #include <memory>
+#include <map>
+#include "tinyxml2.h"
+#include "ActorInterfaces.hpp"
 
 namespace Torti {
+// FIXME: Untested
 
-class Actor;
-class ActorComponent;
+///
+/// Defines any game entity
+///
+class Actor
+{
+    friend class ActorFactory;
+        
+    using ActorComponents = std::map<ComponentId, StrongActorComponentPtr>;
 
-using ActorId = unsigned int;
-using ComponentId = unsigned int;
-
-const ActorId INVALID_ACTOR_ID = 0;
-const ComponentId INVALID_COMPONENT_ID = 0;
-
-using StrongActorPtr = std::shared_ptr<Actor>;
-using WeakActorPtr = std::weak_ptr<Actor>;
-using StrongActorComponentPtr = std::shared_ptr<ActorComponent>;
-using WeakActorComponentPtr = std::shared_ptr<ActorComponent>;
+    ActorId mId;
+    ActorComponents mComponents;
+    ActorType mType;
+    
+public:
+    explicit Actor(ActorId id);
+    ~Actor();
+    
+    bool Init(XmlElementPtr pData);
+    void PostInit();
+    void Destroy();
+    void Update(int deltaMs);
+    
+    // Accessors
+    ActorId GetId() const { return mId; }
+    
+    // Template function for getting components
+    template <class ComponentType>
+    std::weak_ptr<ComponentType> GetComponent(ComponentId id)
+    {
+        ActorComponents::iterator findIt = mComponents.find(id);
+        if (findIt != mComponents.end())
+        {
+            StrongActorComponentPtr pBase(findIt->second);
+            // Cast to subclass version of pointer
+            std::shared_ptr<ComponentType> pSub(std::static_pointer_cast<ComponentType>(pBase));
+            
+            std::weak_ptr<ComponentType> pWeakSub(pSub); // Convert strong to weak pointer
+            
+            return pWeakSub;
+        }
+        else
+        {
+            return std::weak_ptr<ComponentType>();
+        }
+    }
+    
+private:
+    // Only the Actor Factory adds components
+    void AddComponent(StrongActorComponentPtr pComponent);
+};
 
 }
 

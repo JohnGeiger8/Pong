@@ -14,7 +14,7 @@
 #include "IGameView.hpp"
 #include "IGameLogic.hpp"
 #include "EventData.hpp"
-#include "Actor.hpp"
+#include "ActorFactory.hpp"
 #include "Math.hpp"
 
 namespace Torti {
@@ -39,7 +39,7 @@ protected:
 //    int mHumanGamesLoaded;
     GameViewList mGameViews;                        // views that are attached to our game
 //    std::shared_ptr<PathingGraph> m_pPathingGraph;        // the pathing graph
-//    ActorFactory* m_pActorFactory;
+    ActorFactory* m_pActorFactory;
     
 //    bool m_bProxy;                                    // set if this is a proxy game logic, not a real one
 //    int m_remotePlayerId;                            // if we are a remote player - what is out socket number on the server
@@ -107,7 +107,7 @@ public:
     void RequestDestroyActorDelegate(IEventDataPtr pEventData);
 
 protected:
-//    virtual ActorFactory* VCreateActorFactory(void);
+    virtual ActorFactory* VCreateActorFactory(void);
 
     // [rez] Override this function to do any game-specific loading.
     virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) { return true; }

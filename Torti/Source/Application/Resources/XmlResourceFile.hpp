@@ -13,6 +13,7 @@
 #include "tinyxml2.h"
 
 namespace Torti {
+/// FIXME: untested
 
 using XmlDocument = tinyxml2::XMLDocument;
 using XmlDocumentPtr = XmlDocument*;

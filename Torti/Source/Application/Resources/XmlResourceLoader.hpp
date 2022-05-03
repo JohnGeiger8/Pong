@@ -13,6 +13,7 @@
 #include "ResourceInterfaces.hpp"
 
 namespace Torti {
+/// FIXME: untested
 
 using XmlElementPtr = tinyxml2::XMLElement*;
 
