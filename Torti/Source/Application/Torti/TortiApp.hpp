@@ -8,6 +8,7 @@
 #ifndef TortiApp_hpp
 #define TortiApp_hpp
 
+#include <map>
 #include <memory>
 #include "TortiGameLogic.hpp"
 #include "TortiHumanView.hpp"
@@ -32,6 +33,7 @@ protected:
     bool mIsQuitting;           // App is running close sequence
     Rect mDesktopSize;          // Current desktop size, not client window size
     Point mScreenSize;          // Game screen size
+    std::map<std::string, std::shared_ptr<ResourceHandle>> mResources;
 
 public:
     TortiGameApp();
@@ -63,6 +65,8 @@ public:
     void OnFrameRender(double time, float elapsedTime);
 
     std::shared_ptr<TortiGameLogic> GetGameLogic(void) const { return m_pGame; }
+    
+    std::shared_ptr<ResourceHandle> GetResourceHandle(const Resource& r);
 
 protected:
     virtual void VRegisterGameEvents() { }

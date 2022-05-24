@@ -26,8 +26,12 @@ XmlResourceFile::~XmlResourceFile()
 
 bool XmlResourceFile::VOpen()
 {
-    if (m_pXmlDocumentPtr->LoadFile(mResourceFileName.c_str()) != tinyxml2::XML_SUCCESS)
+    int error = m_pXmlDocumentPtr->LoadFile(mResourceFileName.c_str());
+    if (error != tinyxml2::XML_SUCCESS)
+    {
+        printf("Error: %s\n", m_pXmlDocumentPtr->ErrorStr());
         return false;
+    }
     
     return true;
 }

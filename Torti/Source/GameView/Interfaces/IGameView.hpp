@@ -10,6 +10,7 @@
 #define IGameView_hpp
 
 #include <list>
+#include "ActorInterfaces.hpp"
 #include "IScreenElement.hpp"
 
 namespace Torti {
@@ -31,7 +32,7 @@ public:
     virtual void VOnRender(double fTime, float fElapsedTime)=0;
     virtual GameViewType VGetType()=0;
     virtual GameViewId VGetId() const=0;
-//    virtual void VOnAttach(GameViewId vid, ActorId aid)=0;
+    virtual void VOnAttach(GameViewId vid, ActorId aid)=0;
 
 //    virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg )=0;
     virtual void VOnUpdate(unsigned long deltaMs)=0;

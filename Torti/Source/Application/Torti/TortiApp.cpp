@@ -6,7 +6,7 @@
 //
 
 #include "TortiApp.hpp"
-
+#include "SDLRenderer.hpp"
 
 namespace Torti {
 
@@ -19,8 +19,11 @@ TortiGameApp::TortiGameApp()
         mScreenSize(0, 0),
         mIsRunning(false),
         m_pEventManager(NULL),
+        m_pWindow(NULL),
+        m_pRenderer(NULL),
         mIsQuitRequested(false),
-        mIsQuitting(false)
+        mIsQuitting(false),
+        mResources()
 {
     g_pApp = this;
 }
@@ -32,23 +35,29 @@ bool TortiGameApp::InitInstance(int screenWidth, int screenHeight)
 {
     RegisterEngineEvents();
     VRegisterGameEvents();
-    
-    // FIXME: Initialize resource cache/array/whatever here as needed
-    
-    // FIXME: Initialize resource loaders here as needed
-    
+        
     m_pEventManager = std::shared_ptr<EventManager>(new EventManager("", true));
     if (!m_pEventManager)
     {
-        printf("Error initializing event manager.");
+        printf("Error initializing event manager.\n");
         return false;
     }
     
-    // FIXME: initialize the window here
+    m_pWindow = std::make_shared<SDLWindow>();
+    if (!m_pWindow->VCreateWindow(VGetGameTitle(), 0, 0, screenWidth, screenHeight))
+    {
+        printf("Error initializing window of type %d.\n", m_pWindow->VGetWindowType());
+        return false;
+    }
     
     mScreenSize = Point(screenWidth, screenHeight);
     
-    // FIXME: Check renderer type and initialize here
+    m_pRenderer = std::make_shared<SDLRenderer>();
+    if (!m_pRenderer->VInitRenderer(m_pWindow))
+    {
+        printf("Error initializing renderer.\n");
+        return false;
+    }
     
     m_pGame = VCreateGameAndView();
     if (!m_pGame)
@@ -106,6 +115,21 @@ void TortiGameApp::OnFrameRender(double time, float elapsedTime)
 //        view->VOnRender(time, elapsedTime);
 //    }
 }
+
+std::shared_ptr<ResourceHandle> TortiGameApp::GetResourceHandle(const Resource &r)
+{
+    auto it = mResources.find(r.mName);
+    if (it == mResources.end())
+        return std::shared_ptr<ResourceHandle>();
+    
+    return it->second;
+}
+
+//// FIXME: development function
+//void TortiGameApp::AddResource(std::shared_ptr<ResourceHandle> rh)
+//{
+//
+//}
 
 // Don't think I need this
 void TortiGameApp::RegisterEngineEvents()

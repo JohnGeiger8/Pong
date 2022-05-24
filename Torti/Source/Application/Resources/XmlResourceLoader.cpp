@@ -6,6 +6,7 @@
 //
 
 #include "XmlResourceLoader.hpp"
+#include "TortiApp.hpp"
 
 namespace Torti {
 
@@ -45,8 +46,9 @@ XmlElementPtr XmlResourceLoader::LoadAndReturnRootXmlElement(const char* resourc
 
 std::shared_ptr<ResourceHandle> XmlResourceLoader::GetHandle(Resource &resource)
 {
-    // FIXME: need to grab handle from some kind of global resource cache
-    return std::shared_ptr<ResourceHandle>();
+    // FIXME: for testing only
+    
+    return g_pApp->GetResourceHandle(resource);
 }
 
 
