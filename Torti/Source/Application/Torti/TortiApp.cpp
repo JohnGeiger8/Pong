@@ -7,11 +7,14 @@
 
 #include "TortiApp.hpp"
 #include "SDLRenderer.hpp"
+#include "SDLWindow.hpp"
+#include "Audio.hpp"
 
 namespace Torti {
 
 /// Application global variable
 TortiGameApp* g_pApp = NULL;
+AudioSystemPtr g_pAudio = NULL;
 
 TortiGameApp::TortiGameApp()
     : m_pGame(NULL),
