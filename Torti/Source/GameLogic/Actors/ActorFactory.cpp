@@ -8,12 +8,18 @@
 #include "ActorFactory.hpp"
 #include "Actor.hpp"
 #include "ActorComponent.hpp"
+#include "TransformComponent.hpp"
+#include "PhysicsComponent.hpp"
 
 namespace Torti {
 
 ActorFactory::ActorFactory()
 {
+    mLastActorId = INVALID_ACTOR_ID;
     
+    // Register components
+    mComponentFactory.Register<TransformComponent>(ActorComponent::GetIdFromName(TransformComponent::gName));
+    mComponentFactory.Register<PhysicsComponent>(ActorComponent::GetIdFromName(PhysicsComponent::gName));
 }
 
 StrongActorPtr ActorFactory::CreateActor(const std::string actorResource, XmlElementPtr overrides, const Point *initialTransform, const ActorId serversActorId)

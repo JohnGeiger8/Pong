@@ -13,6 +13,7 @@
 #include <map>
 #include "tinyxml2.h"
 #include "ActorInterfaces.hpp"
+#include "ActorComponent.hpp"
 
 namespace Torti {
 // FIXME: Untested
@@ -56,6 +57,24 @@ public:
             std::weak_ptr<ComponentType> pWeakSub(pSub); // Convert strong to weak pointer
             
             return pWeakSub;
+        }
+        else
+        {
+            return std::weak_ptr<ComponentType>();
+        }
+    }
+    
+    template <class ComponentType>
+    std::weak_ptr<ComponentType> GetComponent(const char *name)
+    {
+        ComponentId id = ActorComponent::GetIdFromName(name);
+        ActorComponents::iterator findIt = mComponents.find(id);
+        if (findIt != mComponents.end())
+        {
+            StrongActorComponentPtr pBase(findIt->second);
+            std::shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
+            std::weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
+            return pWeakSub;  // return the weak pointer
         }
         else
         {

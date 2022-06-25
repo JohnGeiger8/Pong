@@ -7,3 +7,8 @@
 
 #include "Math.hpp"
 
+namespace Torti {
+
+const Mat2x2 Mat2x2::gIdentity(1, 0, 1, 0);
+
+}

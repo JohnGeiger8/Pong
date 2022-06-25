@@ -24,8 +24,9 @@ ResourceHandle::ResourceHandle(Resource &resource, char *buffer, unsigned int si
 
 ResourceHandle::~ResourceHandle()
 {
-    // FIXME: is this safe?
-    delete [] mBuffer;
+    // FIXME: is this safe? Definitely not
+    if (mBuffer)
+        delete mBuffer;
     //m_pResourceCache->MemoryHasBeenFreed(mSize);
 }
 

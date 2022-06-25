@@ -9,6 +9,7 @@
 #ifndef XmlResourceLoader_hpp
 #define XmlResourceLoader_hpp
 
+#include <list>
 #include "tinyxml2.h"
 #include "ResourceInterfaces.hpp"
 
@@ -48,6 +49,8 @@ public:
 private:
     static std::shared_ptr<ResourceHandle> GetHandle(Resource &resource); // ???
 };
+
+extern std::list<std::shared_ptr<ResourceHandle>> gResources;
 
 }
 

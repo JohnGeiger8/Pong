@@ -12,6 +12,7 @@
 #include <functional>
 #include "tinyxml2.h"
 #include "ActorInterfaces.hpp"
+#include "StringUtil.hpp"
 
 namespace Torti {
 
@@ -27,22 +28,20 @@ protected:
     StrongActorPtr m_pOwner;
     
 public:
-    virtual ~ActorComponent() { }
+    virtual ~ActorComponent() { m_pOwner.reset(); }
     
     // Override by component implementation classes
     virtual bool VInit(tinyxml2::XMLElement* pData) = 0;
     virtual void VPostInit() { }
     virtual void VUpdate(int deltaMs) { }
     
-    virtual ComponentId VGetComponentId() const = 0;
+    virtual ComponentId VGetComponentId() const { return GetIdFromName(VGetName()); };
     virtual const char *VGetName() const = 0;
     
-    // FIXME: this seems wrong currently
     static ComponentId GetIdFromName(const char* componentStr)
     {
-//        void* rawId = std::HashedString::hash_name(componentStr);
-//        return reinterpret_cast<ComponentId>(componentStr)
-        return 0;
+        void* rawId = HashedString::hash_name(componentStr);
+        return static_cast<ComponentId>(reinterpret_cast<std::uintptr_t>(rawId));
     }
 
 private:
