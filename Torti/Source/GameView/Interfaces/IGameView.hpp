@@ -29,10 +29,13 @@ enum GameViewType
 class IGameView
 {
 public:
+    virtual void VOnRestore()=0;
+    virtual void VOnLostDevice()=0;
     virtual void VOnRender(double fTime, float fElapsedTime)=0;
     virtual GameViewType VGetType()=0;
     virtual GameViewId VGetId() const=0;
-    virtual void VOnAttach(GameViewId vid, ActorId aid)=0;
+    
+    virtual void VOnAttach(GameViewId vid)=0;//, ActorId aid)=0;
 
 //    virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg )=0;
     virtual void VOnUpdate(unsigned long deltaMs)=0;
@@ -40,6 +43,7 @@ public:
     virtual ~IGameView() { };
 };
 
+using ScreenElementPtr = std::shared_ptr<IScreenElement>;
 using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 using GameViewList = std::list<std::shared_ptr<IGameView>>;
 

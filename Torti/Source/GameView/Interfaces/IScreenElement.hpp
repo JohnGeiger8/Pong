@@ -15,6 +15,12 @@ class IScreenElement
 {
 public:
     virtual void VOnRender(double fTime, float fElapsedTime) = 0;
+    
+    ///
+    /// Called just after class is instantiated, and when interruption such as change in resolution or being awoken from sleep
+    ///
+    virtual void VOnRestore() = 0;
+    virtual void VOnLostDevice()=0;
     virtual void VOnUpdate(int deltaMilliseconds) = 0;
 
     virtual int VGetZOrder() const = 0;

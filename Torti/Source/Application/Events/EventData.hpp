@@ -20,9 +20,9 @@ class IEventData;
 using IEventDataPtr = std::shared_ptr<IEventData>;
 using EventType = unsigned long;
 
-//
-// Top-level interface class for event data being sent by Event Manager.
-//
+///
+/// Top-level interface class for event data being sent by Event Manager.
+///
 class IEventData
 {
 public:
@@ -33,9 +33,9 @@ public:
     virtual const char* GetName() const = 0;
 };
 
-//
-// Base Event Data class to be inherited from when creating custom event data.
-//
+///
+/// Base Event Data class to be inherited from when creating custom event data.
+///
 class BaseEventData : public IEventData
 {
     const float mTimestamp;
@@ -56,9 +56,9 @@ public:
 
 /// Commonly needed Event Data classes
 
-//
-// Communicates an update is needed, sent out each game tick.
-//
+///
+/// Communicates an update is needed, sent out each game tick.
+///
 class EventData_UpdateTick : public BaseEventData
 {
     int mDeltaMs;
@@ -143,9 +143,9 @@ public:
 //    EXPORT_FOR_SCRIPT_EVENT(EvtData_PlaySound);
 //};
 
-//
-// Indicates when a new game is started.
-//
+///
+/// Indicates when a new game is started.
+///
 class EventData_EnvironmentLoaded : public BaseEventData
 {
 public:
@@ -156,6 +156,20 @@ public:
     virtual IEventDataPtr VCopy() const
         { return IEventDataPtr(new EventData_EnvironmentLoaded()); }
     virtual const char* GetName() const { return "EventData_EnvironmentLoaded";  }
+};
+
+///
+/// Indicates the application should quit
+///
+class EventData_QuittingGame : public BaseEventData
+{
+public:
+    static const EventType sk_EventType;
+    
+    EventData_QuittingGame() { }
+    virtual const EventType& VGetEventType() const { return sk_EventType; }
+    virtual IEventDataPtr VCopy() const { return IEventDataPtr(new EventData_QuittingGame()); }
+    virtual const char* GetName() const { return "EventData_QuittingGame"; }
 };
 
 } // namespace Torti

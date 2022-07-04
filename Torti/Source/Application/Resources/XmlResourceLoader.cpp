@@ -6,7 +6,7 @@
 //
 
 #include "XmlResourceLoader.hpp"
-#include "TortiApp.hpp"
+#include "Globals.hpp"
 #include "XmlResourceFile.hpp"
 
 namespace Torti {
