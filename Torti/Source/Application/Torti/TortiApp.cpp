@@ -9,6 +9,7 @@
 #include "SDLRenderer.hpp"
 #include "SDLWindow.hpp"
 #include "Audio.hpp"
+#include "Globals.hpp"
 
 namespace Torti {
 
@@ -78,9 +79,7 @@ bool TortiGameApp::InitInstance(int screenWidth, int screenHeight)
 
 bool TortiGameApp::VLoadGame()
 {
-    // FIXME: Argument?
-//    return m_pGame->VLoadGame("");
-    return true;
+    return m_pGame->VLoadGame("");
 }
 
 ///
@@ -92,7 +91,8 @@ void TortiGameApp::OnUpdateGame(double time, float elapsedTime)
 {
     if (g_pApp->mIsQuitting)
     {
-        printf("Quitting"); // FIXME: Notify user or otherwise handle quitting
+        const IEventDataPtr pQuitEvent = std::shared_ptr<IEventData>(new EventData_QuittingGame());
+        IEventManager::GetGlobalEventManager()->VQueueEvent(pQuitEvent);
     }
     
     if (g_pApp->m_pGame)
@@ -100,8 +100,7 @@ void TortiGameApp::OnUpdateGame(double time, float elapsedTime)
         // Give event queue 20 ms to process events
         IEventManager::GetGlobalEventManager()->VTickVUpdate(20);
         
-        // FIXME: implement
-//        g_pApp->m_pGame->VOnUpdate(time, elapsedTime);
+        g_pApp->m_pGame->VOnUpdate(time, elapsedTime);
     }
 }
 
@@ -112,11 +111,10 @@ void TortiGameApp::OnFrameRender(double time, float elapsedTime)
 {
     TortiGameLogic *pGame = g_pApp->m_pGame.get();
     
-    // FIXME: implement
-//    for (const TortiHumanView& view : pGame->mGameViews)
-//    {
-//        view->VOnRender(time, elapsedTime);
-//    }
+    for (std::shared_ptr<IGameView> view : pGame->mGameViews)
+    {
+        view->VOnRender(time, elapsedTime);
+    }
 }
 
 std::shared_ptr<ResourceHandle> TortiGameApp::GetResourceHandle(const Resource &r)

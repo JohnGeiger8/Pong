@@ -24,12 +24,13 @@ using Level = std::string;
 
 class TortiGameLogic : public IGameLogic
 {
+    friend class TortiGameApp;
 protected:
     float mLifetime;                           //indicates how long this game has been in session
 //    ProcessManager* m_pProcessManager;             // a game logic entity
 //    GCCRandom m_random;                                // our RNG
-    ActorMap mActors;
-    ActorId mLastActorId;
+//    ActorMap mActors;
+//    ActorId mLastActorId;
     BaseGameState mState;                            // game state: loading, running, etc.
     int mExpectedPlayers;                            // how many local human players
 //    int m_ExpectedRemotePlayers;                    // expected remote human players
@@ -39,7 +40,7 @@ protected:
 //    int mHumanGamesLoaded;
     GameViewList mGameViews;                        // views that are attached to our game
 //    std::shared_ptr<PathingGraph> m_pPathingGraph;        // the pathing graph
-    ActorFactory* m_pActorFactory;
+//    std::shared_ptr<ActorFactory> m_pActorFactory;
     
 //    bool m_bProxy;                                    // set if this is a proxy game logic, not a real one
 //    int m_remotePlayerId;                            // if we are a remote player - what is out socket number on the server
@@ -63,23 +64,23 @@ public:
     
 //    const bool CanRunLua() const { return !IsProxy() || GetState()!=BGS_Running; }
 
-    ActorId GetNewActorID(void)
-    {
-        return ++mLastActorId;
-    }
+//    ActorId GetNewActorID(void)
+//    {
+//        return ++mLastActorId;
+//    }
     
 //    std::shared_ptr<PathingGraph> GetPathingGraph(void) { return m_pPathingGraph; }
 //    GCCRandom& GetRNG(void) { return m_random; }
 
-    virtual void VAddView(std::shared_ptr<IGameView> pView, ActorId actorId=INVALID_ACTOR_ID);
+    virtual void VAddView(std::shared_ptr<IGameView> pView);
     virtual void VRemoveView(std::shared_ptr<IGameView> pView);
 
-    virtual StrongActorPtr VCreateActor(const std::string &actorResource, tinyxml2::XMLElement *overrides, const Point initialTransform, const ActorId serversActorId=INVALID_ACTOR_ID);  // [rez] note: don't store this strong pointer outside of this class
-    virtual void VDestroyActor(const ActorId actorId);
-    virtual WeakActorPtr VGetActor(const ActorId actorId);
-    virtual void VModifyActor(const ActorId actorId, tinyxml2::XMLElement *overrides);
-
-    virtual void VMoveActor(const ActorId id, Point const &point) {}
+//    virtual StrongActorPtr VCreateActor(const std::string &actorResource, tinyxml2::XMLElement *overrides, const Mat2x2 initialTransform, const ActorId serversActorId=INVALID_ACTOR_ID);  // [rez] note: don't store this strong pointer outside of this class
+//    virtual void VDestroyActor(const ActorId actorId);
+//    virtual WeakActorPtr VGetActor(const ActorId actorId);
+//    virtual void VModifyActor(const ActorId actorId, tinyxml2::XMLElement *overrides);
+//
+//    virtual void VMoveActor(const ActorId id, Point const &point) {}
 
     // editor functions
 //    std::string GetActorXml(const ActorId id);
@@ -90,30 +91,31 @@ public:
 //    virtual void VSetProxy();
 
     // Logic Update
-    virtual void VOnUpdate(float time, float elapsedTime);
+    virtual void VOnUpdate(float time, float elapsedTime) override;
 
     // Changing Game Logic State
-    virtual void VChangeState(BaseGameState newState);
+    virtual void VChangeState(BaseGameState newState) override;
     const BaseGameState GetState() const { return mState; }
 
     // Render Diagnostics
 //    void ToggleRenderDiagnostics() { m_RenderDiagnostics = !m_RenderDiagnostics; }
 //    virtual void VRenderDiagnostics();
-    virtual std::shared_ptr<IGamePhysics> VGetGamePhysics(void) { return m_pPhysics; }
+    virtual std::shared_ptr<IGamePhysics> VGetGamePhysics(void) override { return m_pPhysics; }
     
 //    void AttachProcess(StrongProcessPtr pProcess) { if (m_pProcessManager) {m_pProcessManager->AttachProcess(pProcess);} }
 
     // event delegates
-    void RequestDestroyActorDelegate(IEventDataPtr pEventData);
+//    void RequestDestroyActorDelegate(IEventDataPtr pEventData);
+    
 
 protected:
-    virtual ActorFactory* VCreateActorFactory(void);
+//    virtual ActorFactory* VCreateActorFactory(void);
 
-    // [rez] Override this function to do any game-specific loading.
+    // [rez] Override this function to do any game-specific loading. 
     virtual bool VLoadGameDelegate(tinyxml2::XMLElement* pLevelData) { return true; }
 
-    void MoveActorDelegate(IEventDataPtr pEventData);
-    void RequestNewActorDelegate(IEventDataPtr pEventData);
+//    void MoveActorDelegate(IEventDataPtr pEventData);
+//    void RequestNewActorDelegate(IEventDataPtr pEventData);
 };
 
 }

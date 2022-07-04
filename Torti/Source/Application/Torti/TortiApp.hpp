@@ -21,7 +21,7 @@ namespace Torti {
 
 using String = std::string;
 
-// FIXME: move/replace these
+// FIXME: move/replace this
 struct GameOptions
 {};
 
@@ -74,8 +74,6 @@ protected:
 private:
     void RegisterEngineEvents();
 };
-
-extern TortiGameApp *g_pApp;
 
 }
 
