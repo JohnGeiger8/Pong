@@ -9,6 +9,8 @@
 
 namespace Pong {
 
+PongApp g_pPongApp;
+
 PongApp::PongApp()
 {
     
