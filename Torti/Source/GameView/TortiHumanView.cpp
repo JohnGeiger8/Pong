@@ -17,8 +17,6 @@ const unsigned int SCREEN_REFRESH_RATE = (1000/60); // 60 frames per second
 TortiHumanView::TortiHumanView()
 {
     InitAudio();
-    
-
 }
 
 TortiHumanView::~TortiHumanView()
@@ -83,7 +81,6 @@ void TortiHumanView::VOnLostDevice()
     }
 }
 
-
 void TortiHumanView::VPushElement(ScreenElementPtr pElement)
 {
     mScreenElements.push_front(pElement);
@@ -96,7 +93,7 @@ void TortiHumanView::VRemoveElement(ScreenElementPtr pElement)
 
 void TortiHumanView::TogglePause(bool active)
 {
-    
+    // FIXME: implement if needed?
 }
 
 bool TortiHumanView::InitAudio()
@@ -121,6 +118,56 @@ void TortiHumanView::VOnUpdate(unsigned long deltaMs)
     {
         element->VOnUpdate(deltaMs);
     }
+}
+
+bool TortiHumanView::VOnAppMessage(AppMessage msg)
+{
+    // Iterate through screen elements in reverse order since top one should process first
+    for (ScreenElementList::reverse_iterator it = mScreenElements.rbegin(); it != mScreenElements.rend(); it++)
+    {
+        if ((*it)->VIsVisible())
+        {
+            if ((*it)->VOnAppMessage(msg))
+                return true;
+        }
+    }
+    
+    bool result = false;
+    switch (msg.pEvent->type)
+    {
+        case SDL_KEYDOWN:
+            if (mKeyboardHandler)
+            {
+                result = mKeyboardHandler->VOnKeyDown(msg.pEvent->key.keysym.sym);
+            }
+            break;
+            
+        case SDL_KEYUP:
+            if (mKeyboardHandler)
+            {
+                result = mKeyboardHandler->VOnKeyUp(msg.pEvent->key.keysym.sym);
+            }
+            break;
+            
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            if (mPointerHandler)
+            {
+                std::string button = msg.pEvent->button.button == SDL_BUTTON_LEFT ? "PointerLeft" : "PointerRight";
+                result = mPointerHandler->VOnPointerButtonDown(Point(msg.pEvent->button.x, msg.pEvent->button.y), mPointerRadius, button);
+            }
+            break;
+            
+        case SDL_MOUSEMOTION:
+            if (mPointerHandler)
+                result = mPointerHandler->VOnPointerMove(Point(msg.pEvent->button.x, msg.pEvent->button.y), mPointerRadius);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return result;
 }
 
 }

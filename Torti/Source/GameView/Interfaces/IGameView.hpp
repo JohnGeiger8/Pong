@@ -12,6 +12,7 @@
 #include <list>
 #include "ActorInterfaces.hpp"
 #include "IScreenElement.hpp"
+#include "AppMessage.hpp"
 
 namespace Torti {
 
@@ -37,7 +38,11 @@ public:
     
     virtual void VOnAttach(GameViewId vid)=0;//, ActorId aid)=0;
 
-//    virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg )=0;
+    ///
+    /// Processes Application Message
+    /// @Returns true if the view has consumed the message, meaning no other view should process it
+    /// 
+    virtual bool VOnAppMessage(AppMessage msg)=0;
     virtual void VOnUpdate(unsigned long deltaMs)=0;
 
     virtual ~IGameView() { };

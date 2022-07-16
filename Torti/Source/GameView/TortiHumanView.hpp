@@ -10,6 +10,8 @@
 #define TortiHumanView_hpp
 
 #include "IGameView.hpp"
+#include "IKeyboardHandler.hpp"
+#include "IPointerHandler.hpp"
 
 namespace Torti {
 
@@ -26,9 +28,9 @@ protected:
     
 public:
     ScreenElementList mScreenElements;
-    //std::shared_ptr<IKeyboardHandler> mKeyboardHandler;
-//    std::shared_ptr<IPointerHandler> mPointerHandler;
-    //int mPointerRadius;
+    std::shared_ptr<IKeyboardHandler> mKeyboardHandler;
+    std::shared_ptr<IPointerHandler> mPointerHandler;
+    int mPointerRadius;
     
     TortiHumanView();
     virtual ~TortiHumanView();
@@ -37,12 +39,12 @@ public:
 
 public:
     // IGameView implementation
-    virtual void VOnRender(double fTime, float fElapsedTime);
-    virtual void VOnRestore();
-    virtual void VOnLostDevice();
-    virtual GameViewType VGetType() { return GameView_Human; };
-    virtual GameViewId VGetId() const { return mViewId; };
-    virtual void VOnAttach(GameViewId vid) { mViewId = vid; }
+    virtual void VOnRender(double fTime, float fElapsedTime) override;
+    virtual void VOnRestore() override;
+    virtual void VOnLostDevice() override;
+    virtual GameViewType VGetType() override { return GameView_Human; };
+    virtual GameViewId VGetId() const override { return mViewId; };
+    virtual void VOnAttach(GameViewId vid) override { mViewId = vid; }
     
     virtual void VPushElement(ScreenElementPtr pElement);
     virtual void VRemoveElement(ScreenElementPtr pElement);
@@ -54,8 +56,8 @@ public:
     // Camera adjustments
 //    virtual void VSetCameraOffset(const Vec4 & camOffset) { }
 
-//    virtual LRESULT CALLBACK VOnMsgProc( AppMsg msg )=0;
-    virtual void VOnUpdate(unsigned long deltaMs);
+    virtual bool VOnAppMessage(AppMessage msg) override;
+    virtual void VOnUpdate(unsigned long deltaMs) override;
     
 protected:
     virtual bool VLoadGameDelegate(XmlElementPtr pLevelData) { return true; }

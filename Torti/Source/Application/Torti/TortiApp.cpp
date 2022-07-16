@@ -117,6 +117,67 @@ void TortiGameApp::OnFrameRender(double time, float elapsedTime)
     }
 }
 
+bool TortiGameApp::ProcessMessages()
+{
+    // FIXME: implement
+    /*
+     Check out GameCodeApp::msgProc()
+     Maybe create IMessageHandler member function that allows us to handle message depending on SDL vs. some other thing being used
+     Either way, this is where the SDL Event is grabbed and sent to the list of game views
+     */
+    SDL_EventPtr pEvent;
+    while (!mIsQuitting)
+    {
+        if (SDL_PollEvent(pEvent.get()) != 0)
+        {
+            switch (pEvent->type) {
+                case SDL_QUIT:
+                    mIsQuitting = true;
+                    break;
+                case SDL_KEYDOWN:
+                case SDL_KEYUP:
+                case SDL_KEYMAPCHANGED:
+                case SDL_MOUSEMOTION:
+                case SDL_MOUSEBUTTONDOWN:
+                case SDL_MOUSEBUTTONUP:
+                case SDL_MOUSEWHEEL:
+                case SDL_CONTROLLERBUTTONUP:
+                case SDL_CONTROLLERBUTTONDOWN:
+                case SDL_CONTROLLERAXISMOTION:
+                case SDL_CONTROLLERTOUCHPADUP:
+                case SDL_CONTROLLERTOUCHPADDOWN:
+                case SDL_CONTROLLERTOUCHPADMOTION:
+                case SDL_CONTROLLERDEVICEADDED:
+                case SDL_CONTROLLERDEVICEREMOVED:
+                case SDL_CONTROLLERSENSORUPDATE:
+                case SDL_CONTROLLERDEVICEREMAPPED:
+                    if (g_pApp->m_pGame)
+                    {
+                        std::shared_ptr<TortiGameLogic> game = g_pApp->m_pGame;
+                        AppMessage message;
+                        message.pEvent = pEvent;
+                        
+                        // Loop through in reverse order b/c top view processes messages first
+                        for (GameViewList::reverse_iterator i = game->mGameViews.rbegin(); i != game->mGameViews.rend(); i++)
+                        {
+                            if ((*i)->VOnAppMessage(message))
+                            {
+                                // Message processed: break from for loop
+                                break;
+                            }
+                        }
+                    }
+                default:
+                    break;
+            }
+        }
+    }
+    
+    // FIXME: Handle quitting here?
+    
+    return true;
+}
+
 std::shared_ptr<ResourceHandle> TortiGameApp::GetResourceHandle(const Resource &r)
 {
     auto it = mResources.find(r.mName);
