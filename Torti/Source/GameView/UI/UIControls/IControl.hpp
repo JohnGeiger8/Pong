@@ -10,6 +10,7 @@
 #define IControl_hpp
 
 #include "Math.hpp"
+#include "AppMessage.hpp"
 
 namespace Torti {
 
@@ -26,6 +27,7 @@ public:
     virtual void VOnRestore()=0;
     virtual void VOnLostDevice()=0;
     virtual void VOnUpdate(int deltaMilliseconds)=0;
+    virtual bool VOnAppMessage(AppMessage msg)=0;
 
     virtual void VSetHeight(int h)=0;
     virtual int VGetHeight()=0;

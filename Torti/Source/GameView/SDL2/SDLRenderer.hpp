@@ -23,6 +23,8 @@ public:
     SDLRenderer();
     virtual ~SDLRenderer();
     
+    SDL_Renderer* GetRenderer() { return m_pRenderer; }
+    
     // Implement IRenderer interface
     virtual bool VInitRenderer(std::shared_ptr<IWindow> window);
     virtual void VSetBackgroundColor(Uint8 red, Uint8 green, Uint8 blue, Uint8 alpha);

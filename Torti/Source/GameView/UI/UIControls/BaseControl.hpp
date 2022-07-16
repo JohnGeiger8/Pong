@@ -19,26 +19,26 @@ namespace Torti {
 class BaseControl : public IControl
 {
 protected:
-    int height;
-    int width;
-    Point position;
+    int mHeight;
+    int mWidth;
+    Point mPosition;
     
     BaseControl(int height, int width, Point position)
-        : width(width),
-          height(height),
-          position(position)
+        : mWidth(width),
+          mHeight(height),
+          mPosition(position)
     { }
     
 public:
     
     virtual void VOnUpdate(int deltaMilliseconds) override { }
     
-    virtual void VSetHeight(int h) override { height = h; }
-    virtual int VGetHeight() override { return height; }
-    virtual void VSetWidth(int w) override { width = w; }
-    virtual int VGetWidth() override { return width; }
-    virtual void VSetPosition(Point point) override { position = point; }
-    virtual Point VGetPosition() override { return position; }
+    virtual void VSetHeight(int h) override { mHeight = h; }
+    virtual int VGetHeight() override { return mHeight; }
+    virtual void VSetWidth(int w) override { mWidth = w; }
+    virtual int VGetWidth() override { return mWidth; }
+    virtual void VSetPosition(Point point) override { mPosition = point; }
+    virtual Point VGetPosition() override { return mPosition; }
 };
 
 }

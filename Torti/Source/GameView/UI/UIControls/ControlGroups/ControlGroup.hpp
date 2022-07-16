@@ -26,34 +26,33 @@ private:
     enum Direction { VERTICAL, HORIZONTAL };
     using IControlPtr = std::shared_ptr<IControl>;
     
-    std::vector<IControlPtr> controls;
-    std::vector<Margins> margins;
-    Direction direction;
+    std::vector<IControlPtr> mControls;
+    std::vector<Margins> mMargins;
+    Direction mDirection;
     
     // Space taken up by all controls, including their margins
-    int usedWidth;
-    int usedHeight;
-    bool isCenteredOnCrossAxis;
+    int mUsedWidth;
+    int mUsedHeight;
     
 public:
     ControlGroup(int width, int height, Point position)
         : BaseControl(width, height, position),
-          direction(VERTICAL),
-          usedWidth(0),
-          usedHeight(0),
-          isCenteredOnCrossAxis(true)
-    { controls = std::vector<IControlPtr>(); margins = std::vector<Margins>(); }
-    virtual ~ControlGroup();
+          mDirection(VERTICAL),
+          mUsedWidth(0),
+          mUsedHeight(0)
+    { mControls = std::vector<IControlPtr>(); mMargins = std::vector<Margins>(); }
+    virtual ~ControlGroup() { };
     
     bool PushControl(IControlPtr ctrl, Margins m);
     bool RemoveControl(IControlPtr ctrl);
     
     // IControl implementation
-    virtual void VOnRender(double fTime, float fElapsedTime);
-    virtual void VOnRestore();
-    virtual void VOnLostDevice();
-    virtual void VOnUpdate(int deltaMilliseconds);
-    
+    virtual void VOnRender(double fTime, float fElapsedTime) override;
+    virtual void VOnRestore() override;
+    virtual void VOnLostDevice() override;
+    virtual void VOnUpdate(int deltaMilliseconds) override;
+    virtual bool VOnAppMessage(AppMessage msg) override { return false; };
+
 protected:
     virtual bool VCheckIfCtrlFits(IControlPtr ctrl, Margins m);
     virtual void VIncreaseUsedSpace(IControlPtr ctrl, Margins m);

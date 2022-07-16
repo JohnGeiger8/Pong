@@ -16,8 +16,8 @@ bool ControlGroup::PushControl(IControlPtr ctrl, Margins m)
     if (!willFit)
         return false;
     
-    controls.push_back(ctrl);
-    margins.push_back(m);
+    mControls.push_back(ctrl);
+    mMargins.push_back(m);
     VIncreaseUsedSpace(ctrl, m);
     VRecalculatePositions();
         
@@ -26,12 +26,41 @@ bool ControlGroup::PushControl(IControlPtr ctrl, Margins m)
 
 bool ControlGroup::RemoveControl(IControlPtr ctrl)
 {
-    for (auto it = controls.begin(); it != controls.end(); it++)
+    // Get correct controls iterator to erase
+    int index = 0;
+    std::vector<IControlPtr>::iterator it;
+    for (it = mControls.begin(); it != mControls.end(); it++)
     {
         if ((*it) == ctrl)
-            controls.erase(it);
+            break;
+        index++;
     }
     
+    // Return false if control not found
+    if (it == mControls.end())
+        return false;
+    
+    // Get correct margins iterator to erase from margins vector
+    int count = 0;
+    std::vector<Margins>::iterator marginsIt;
+    for (marginsIt = mMargins.begin(); marginsIt != mMargins.end(); marginsIt++)
+    {
+        if (count == index)
+            break;
+        count++;
+    }
+    
+    // Update used height/width
+    if (mDirection == VERTICAL)
+        mUsedHeight -= GetEffectiveHeight(*it, *marginsIt);
+    else
+        mUsedWidth -= GetEffectiveWidth(*it, *marginsIt);
+
+    // Erase objects
+    mControls.erase(it);
+    mMargins.erase(marginsIt);
+
+    VRecalculatePositions();
     return true;
 }
 
@@ -41,11 +70,11 @@ bool ControlGroup::RemoveControl(IControlPtr ctrl)
 void ControlGroup::VRecalculatePositions()
 {
     std::list<std::pair<IControlPtr, int>> ctrls = std::list<std::pair<IControlPtr, int>>();
-    for (int i = 0; i < controls.size(); i++)
+    for (int i = 0; i < mControls.size(); i++)
     {
         // Get height for horizontal because we're centering around horizontal axis
-        int effectiveSize = direction == HORIZONTAL ? GetEffectiveHeight(controls[i], margins[i]) : GetEffectiveWidth(controls[i], margins[i]);
-        ctrls.push_back(std::pair<IControlPtr, int>(controls[i], effectiveSize));
+        int effectiveSize = mDirection == HORIZONTAL ? GetEffectiveHeight(mControls[i], mMargins[i]) : GetEffectiveWidth(mControls[i], mMargins[i]);
+        ctrls.push_back(std::pair<IControlPtr, int>(mControls[i], effectiveSize));
     }
     
     // Sort controls by effective size, then determine axis center from largest control
@@ -53,25 +82,24 @@ void ControlGroup::VRecalculatePositions()
     int center = ctrls.front().second / 2; // center = Largest Ctrl effective size / 2
     
     // Set new control positions
-    for (int i = 0; i < controls.size(); i++)
+    for (int i = 0; i < mControls.size(); i++)
     {
-        int newPosition = 0;
+        int newPosition = mDirection == HORIZONTAL ? mPosition.x : mPosition.y;
         if (i != 0)
         {
-            IControlPtr previousCtrl = controls[i-1];
-            Margins previousMargins = margins[i-1];
-            if (direction == HORIZONTAL)
+            IControlPtr previousCtrl = mControls[i-1];
+            Margins previousMargins = mMargins[i-1];
+            if (mDirection == HORIZONTAL)
                 newPosition = previousCtrl->VGetPosition().x + previousCtrl->VGetWidth() + previousMargins.right;
-            else if (direction == VERTICAL)
+            else if (mDirection == VERTICAL)
                 newPosition = previousCtrl->VGetPosition().y + previousCtrl->VGetHeight() + previousMargins.bottom;
         }
         
-        IControlPtr ctrl = controls[i];
-        if (direction == HORIZONTAL)
-            ctrl->VSetPosition(Point(newPosition + margins[i].left, center - ctrl->VGetHeight() / 2));
+        IControlPtr ctrl = mControls[i];
+        if (mDirection == HORIZONTAL)
+            ctrl->VSetPosition(Point(newPosition + mMargins[i].left, mPosition.y + center - ctrl->VGetHeight() / 2));
         else
-            ctrl->VSetPosition(Point(center - ctrl->VGetWidth() / 2, newPosition + margins[i].top));
-        
+            ctrl->VSetPosition(Point(mPosition.x + center - ctrl->VGetWidth() / 2, newPosition + mMargins[i].top));
     }
 }
 
@@ -80,8 +108,8 @@ void ControlGroup::VRecalculatePositions()
 ///
 bool ControlGroup::VCheckIfCtrlFits(IControlPtr ctrl, Margins m)
 {
-    int ctrlSize = direction == VERTICAL ? GetEffectiveHeight(ctrl, m) : GetEffectiveWidth(ctrl, m);
-    int availableSpace = direction == VERTICAL ? height - usedHeight : width - usedWidth;
+    int ctrlSize = mDirection == VERTICAL ? GetEffectiveHeight(ctrl, m) : GetEffectiveWidth(ctrl, m);
+    int availableSpace = mDirection == VERTICAL ? mHeight - mUsedHeight : mWidth - mUsedWidth;
     
     if (ctrlSize > availableSpace)
     {
@@ -96,7 +124,7 @@ bool ControlGroup::VCheckIfCtrlFits(IControlPtr ctrl, Margins m)
 
 void ControlGroup::VOnRender(double fTime, float fElapsedTime)
 {
-    for (const IControlPtr &ctrl : controls)
+    for (const IControlPtr &ctrl : mControls)
     {
         ctrl->VOnRender(fTime, fElapsedTime);
     }
@@ -104,7 +132,7 @@ void ControlGroup::VOnRender(double fTime, float fElapsedTime)
 
 void ControlGroup::VOnRestore()
 {
-    for (const IControlPtr &ctrl : controls)
+    for (const IControlPtr &ctrl : mControls)
     {
         ctrl->VOnRestore();
     }
@@ -112,7 +140,7 @@ void ControlGroup::VOnRestore()
 
 void ControlGroup::VOnLostDevice()
 {
-    for (const IControlPtr &ctrl : controls)
+    for (const IControlPtr &ctrl : mControls)
     {
         ctrl->VOnLostDevice();
     }
@@ -120,7 +148,7 @@ void ControlGroup::VOnLostDevice()
 
 void ControlGroup::VOnUpdate(int deltaMilliseconds)
 {
-    for (const IControlPtr &ctrl : controls)
+    for (const IControlPtr &ctrl : mControls)
     {
         ctrl->VOnUpdate(deltaMilliseconds);
     }
@@ -140,14 +168,14 @@ int ControlGroup::GetEffectiveHeight(IControlPtr ctrl, Margins m)
 
 void ControlGroup::VIncreaseUsedSpace(IControlPtr ctrl, Margins m)
 {
-    if (direction == VERTICAL)
-        usedHeight += (GetEffectiveHeight(ctrl, m));
+    if (mDirection == VERTICAL)
+        mUsedHeight += (GetEffectiveHeight(ctrl, m));
     else
-        usedWidth += (GetEffectiveWidth(ctrl, m));
+        mUsedWidth += (GetEffectiveWidth(ctrl, m));
 }
 
 bool ControlGroup::SortByEffectiveSize(const std::pair<IControlPtr, int> &a, const std::pair<IControlPtr, int> &b)
 {
-    return a.second < b.second;
+    return a.second > b.second;
 }
 }
